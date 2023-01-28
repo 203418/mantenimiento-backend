@@ -61,4 +61,8 @@ export default class UserRepository implements userRepository<User>{
             return 1;
         }
     }
+    async countUsers(): Promise<Number> {
+        const number = await this.userRepository.count();
+        return number;
+    }
 }

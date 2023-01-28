@@ -14,6 +14,7 @@ export type roll = "MANAGER" | "QUALITY MANAGER" |
 export interface userRepository<T> {
     register(data: userData, query?: Query): Promise<T | number>;
     login(loginData: loginData): Promise<User | number>;
+    countUsers(): Promise<Number>;
 }
 
 export interface rollRepository<T> {

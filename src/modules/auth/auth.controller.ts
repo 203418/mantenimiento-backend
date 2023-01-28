@@ -1,11 +1,25 @@
 import { Request, Response } from "express";
 import { generateJWT } from "../../helpers/middlewares/generateJWT";
+import { verifyJWT } from "../../helpers/middlewares/verifyJWT";
 import User from "../users/users.model";
 import UserRepository from "../users/users.repository";
 
 export default class AuthController {
 
     constructor(private readonly userRepository: UserRepository){}
+
+    
+    async getUserByToken(req: Request, res: Response) {
+        const token: string = req.body.token;
+        const user = await verifyJWT(token);
+        if (!user)
+            return res.status(401).json({
+                user: null
+            });
+        return res.status(200).json({
+            user: {...user}
+        });
+    }
 
     async login(req: Request, res:Response) {
         const { username, password } = req.body;
@@ -25,5 +39,10 @@ export default class AuthController {
                 message: 'Contraseña de usuario incorrecta'
             })
         }
+    }
+
+    async verifyToken(req: Request, res: Response) {
+        const { token } = req.body;
+        
     }
 }

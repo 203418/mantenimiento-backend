@@ -30,11 +30,11 @@ export const validateRoll = (req: Request, res: Response, next: NextFunction) =>
     next();
 }
 
-export const validateUsername = async (req: Request, res: Response) => {
+export const validateUsername = async (req: Request, res: Response, next: NextFunction) => {
     const credentials = await UserRepository.getCredentials(req.body.username);
     if (credentials)
         return res.status(401).json({
             message: "Este nombre de usuario ya existe"
         });
-
+    next();
 }
