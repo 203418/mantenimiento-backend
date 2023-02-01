@@ -7,6 +7,8 @@ const rollController = new RollController(new RollRepository());
 
 const rollRouter = Router();
 
+rollRouter.get('/getRolls', rollController.getRolls.bind(rollController));
+
 rollRouter.post('/roll-factory', rollSeederCheck, rollController.registerRolls.bind(rollController));
 
 export default rollRouter;

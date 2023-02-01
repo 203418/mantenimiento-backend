@@ -5,6 +5,11 @@ export const firsRegisterCheck: any = [
     validateNUsers,
 ];
 
+export const getUsersDifferentsOfId: any = [
+    validateJWT,
+    validateRoll,
+]
+
 export const registerCheck: any = [
     validateJWT,
     validateRoll,

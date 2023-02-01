@@ -4,6 +4,11 @@ import Roll from "./roles.model";
 
 export default class RollController {
     constructor(private readonly repository: rollRepository<Roll>){}
+    async getRolls(req: Request, res: Response) {
+        const rolls: Roll[] = await this.repository.getRolls();
+        return res.status(200).json(rolls);
+
+    }
     async registerRolls(req: Request, res: Response){
         const resp: number = await this.repository.registerRolls();
         if (resp === 0) {

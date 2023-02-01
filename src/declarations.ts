@@ -15,11 +15,13 @@ export interface userRepository<T> {
     register(data: userData, query?: Query): Promise<T | number>;
     login(loginData: loginData): Promise<User | number>;
     countUsers(): Promise<Number>;
+    getUsers(id: number): Promise<User[]>;
 }
 
 export interface rollRepository<T> {
     registerRolls(): Promise<number>;
     registerRoll(roll:roll): Promise<Roll | number>;
+    getRolls(): Promise<Roll[]>;
 }
 
 export interface rollData {

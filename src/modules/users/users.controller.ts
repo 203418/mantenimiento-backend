@@ -5,6 +5,16 @@ import User from "./users.model";
 
 export default class UserController {
     constructor(private readonly repository: userRepository<User>){}
+    async getUsersDifferentOfId(req: Request, res: Response) {
+        const id = req.params.id;
+        const users = await this.repository.getUsers(Number(id));
+        if (users.length <= 0) {
+            return res.status(400).json({
+                msg: 'No hay usuarios aparte de este',
+            });
+        }
+        return res.status(200).json(users)
+    }
     async count(req: Request, res: Response) {
         const nUser = await this.repository.countUsers();
         let resp = 0;
@@ -18,6 +28,7 @@ export default class UserController {
     }
     async register(req: Request, res: Response) {
         const {name, last_name, rolls, username, password} = req.body;
+        console.log(rolls)
         const user = await this.repository.register({name, last_name, rolls, username, password});
         if (typeof user === 'object'){
             const token = await generateJWT( ""+user.id );

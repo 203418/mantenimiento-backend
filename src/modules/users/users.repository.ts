@@ -5,7 +5,7 @@ import bcryptjs from 'bcryptjs';
 import Roll from "../roles/roles.model";
 import Credential from "./credentials.model";
 import User from "./users.model";
-import { Repository } from "typeorm";
+import { Not, Repository } from "typeorm";
 
 export default class UserRepository implements userRepository<User>{
     private userRepository: Repository<User>;
@@ -24,6 +24,12 @@ export default class UserRepository implements userRepository<User>{
     static async getCredentials(username: string): Promise<Credential> {
         const credentialRepository = database.getRepository(Credential);
         return await credentialRepository.findOneBy({ username });
+    }
+
+    async getUsers(id: number): Promise<User[]> {
+        const users = await this.userRepository.find({where: {id: Not(id)}})
+        if (users.length > 0) return users;
+        else return [];
     }
 
     async login(loginData: loginData): Promise<User | number> {

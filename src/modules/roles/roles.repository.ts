@@ -1,6 +1,7 @@
 import { roll, rollRepository } from "../../declarations";
 import Roll from "./roles.model";
 import database from "../../bootstrap/database";
+import { Not } from "typeorm";
 
 const rolls: roll[] = [
     "MANAGER", "QUALITY MANAGER", "SCRUM MASTER", "SOFTWARE ARCHITECT",
@@ -11,6 +12,13 @@ export default class RollRepository implements rollRepository<Roll>{
     static async getNRolls(): Promise<number> {
         const rollRepository = database.getRepository(Roll);
         return await rollRepository.count();
+    }
+    async getRolls(): Promise<Roll[]> {
+        const rollRepository = database.getRepository(Roll);
+        const rolls = await rollRepository.find({where: {name: Not("MANAGER")}});
+        if (rolls.length > 0)
+            return rolls;
+        return []
     }
     async registerRolls(): Promise<number> {
         try {
