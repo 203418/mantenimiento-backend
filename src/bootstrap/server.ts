@@ -8,6 +8,7 @@ import http from 'http';
 import RollController from "../modules/roles/roles.controller";
 import rollRouter from "../modules/roles/roles.router";
 import userRouter from "../modules/users/user.router";
+import processRouter from "../modules/process/process.router";
 
 export default class Server {
     private readonly app: Application;
@@ -20,6 +21,7 @@ export default class Server {
         this.paths = {
             rolls: '/rolls',
             users: '/users',
+            process: '/process',
         };
         this.dataBaseConnection();
         this.middlewares();
@@ -44,6 +46,7 @@ export default class Server {
     routes() {
         this.app.use(this.paths.rolls, rollRouter);
         this.app.use(this.paths.users, userRouter);
+        this.app.use(this.paths.process, processRouter);
     }
     initialize() {
         return new Promise((resolve, reject) => {

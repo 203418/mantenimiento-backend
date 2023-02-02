@@ -17,7 +17,7 @@ export default class AuthController {
                 user: null
             });
         return res.status(200).json({
-            user: {...user}
+            user: {...user, token}
         });
     }
 
@@ -25,7 +25,7 @@ export default class AuthController {
         const { username, password } = req.body;
         const user = await this.userRepository.login({username, password});
         if (typeof user === "object"){
-            console.log(typeof user);const token = await generateJWT( ""+user.id );
+            const token = await generateJWT( ""+user.id );
             return res.status(200).json({...user, token});
         }
         if (user == 1.1){
@@ -39,10 +39,5 @@ export default class AuthController {
                 message: 'Contraseña de usuario incorrecta'
             })
         }
-    }
-
-    async verifyToken(req: Request, res: Response) {
-        const { token } = req.body;
-        
     }
 }

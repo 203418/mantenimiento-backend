@@ -16,7 +16,9 @@ export default class UserController {
         return res.status(200).json(users)
     }
     async count(req: Request, res: Response) {
+        console.log(1);
         const nUser = await this.repository.countUsers();
+        console.log(2);
         let resp = 0;
         if (nUser === 0)
             return res.status(200).json({
