@@ -18,6 +18,9 @@ export default class User {
     @OneToOne(() => Credential, (credential: Credential) => credential.user, {cascade: true})
     credentials: Credential
 
+    @OneToOne(() => Process, (process: Process) => process.last_edited, {cascade: true})
+    edited_process: Process
+
     @OneToMany(() => Process, (process: Process) => process.responsable, {cascade: true, eager: true})
     processes: Process[];
 

@@ -1,4 +1,5 @@
 import { Query } from "typeorm/driver/Query";
+import Manual from "./modules/manual/manual.model";
 import Process from "./modules/process/process.model";
 import Roll from "./modules/roles/roles.model";
 import User from "./modules/users/users.model";
@@ -24,6 +25,11 @@ export interface processRepository<T> {
     registerProcess(data: processData): Promise<Process | Number>;
 }
 
+export interface manualRepository<T> {
+    registerManual(data: manualData): Promise<Manual | Number>;
+}
+
+
 export interface rollRepository<T> {
     registerRolls(): Promise<number>;
     registerRoll(roll:roll): Promise<Roll | number>;
@@ -42,6 +48,10 @@ export interface processData {
     frecuencia: string;
     fase: string;
     idR: number;
+}
+
+export interface manualData {
+    pdf: Buffer;
 }
 
 export interface rollData {

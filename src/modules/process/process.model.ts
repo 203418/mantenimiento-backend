@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToOne, OneToOne, PrimaryGene
 import { ManyToMany } from "typeorm/decorator/relations/ManyToMany";
 import { OneToMany } from "typeorm/decorator/relations/OneToMany";
 import User from "../users/users.model";
+import Manual from "../manual/manual.model";
 
 @Entity('process')
 export default class Process {
@@ -20,8 +21,11 @@ export default class Process {
     @Column('text')
     indicators: string;
 
-    @Column('text')
-    flujo_digram: string;
+    @Column({ type: 'text', nullable: true })
+    flujo_digramS: string;
+
+    @Column({ type: 'bytea', nullable: true })
+    flujo_digramI: Buffer;
 
     @ManyToOne(() => User, (user: User) => user.processes)
     responsable: User;
@@ -29,15 +33,29 @@ export default class Process {
     @Column('text')
     participantes: string;
 
-    @Column('text')
-    evidencia_entrada: string;
+    @Column({ type: 'text', nullable: true })
+    evidencia_entradaS: string;
 
-    @Column('text')
-    evidencia_salida: string;
+    @Column({ type: 'bytea', nullable: true })
+    evidencia_entradaI: Buffer;
+
+    @Column({ type: 'text', nullable: true })
+    evidencia_salidaS: string;
+
+    @Column({ type: 'bytea', nullable: true })
+    evidencia_salidaI: Buffer;
 
     @Column('text')
     frecuencia: string;
 
     @Column('text')
     fase: string;
+
+    @OneToOne(() => User, (user: User) => user.name, {eager: true})
+    @JoinColumn()
+    last_edited: User;
+
+    @OneToOne(() => Manual, (manual: Manual) => manual.pdf, {eager: true})
+    @JoinColumn()
+    pdf: Manual;
 }
