@@ -58,12 +58,10 @@ export default class UserController {
 
     async updateUserOfId(req: Request, res: Response){
         const id = req.body.id;
-
-        try{
-            
-            await this.repository.updateUser(id)
+        const data = req.body
+        try{   
+            await this.repository.updateUser(id, data)
             return res.status(200).json({message: "Usuario actualizado"})
-            
         }catch(error){
             return res.status(200).json({message: "Error al actualizar"})
         }

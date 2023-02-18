@@ -14,6 +14,7 @@ export default class UserRepository implements userRepository<User>{
     constructor(){
         this.userRepository = database.getRepository(User);
     }
+
     static async getNUsers(): Promise<number> {
         return await this.userRepository.count();
     }
@@ -51,8 +52,8 @@ export default class UserRepository implements userRepository<User>{
             const validPassword = bcryptjs.hashSync(data.password, salt);
 
             const user = this.userRepository.create({ name: data.name, last_name: data.last_name });
-
             await this.userRepository.save(user);
+
             const credentials = userCredentials.create({ username: data.username, password: validPassword, user });
             await userCredentials.save(credentials);
 
@@ -63,6 +64,7 @@ export default class UserRepository implements userRepository<User>{
                     return roll;
                 }
             }));
+
             user.credentials = credentials;
             user.rolls = rolls;
             await this.userRepository.save(user);
@@ -78,23 +80,73 @@ export default class UserRepository implements userRepository<User>{
         return number;
     }
 
-
     async deleteUser(id: number): Promise<void>{
         try{
             const userCredentials = database.getRepository(Credential);
             const credentials = await userCredentials.delete(id);
             const user = await this.userRepository.delete(id);
+            
         }catch(error){
             console.log(error)
         }   
     }
 
-    async updateUser(id: number): Promise<void>{
-         try{
-            console.log('hola')
-         }catch(error){
+    async updateUser(id: number, data: Partial<userData>): Promise<void> {
+        const user = await this.userRepository.findOneBy({id : id});
 
-         }
-    }
+        if(user){
+            const userCredentials = database.getRepository(Credential);
+            const credentials = await userCredentials.findOne({ where: { username: data.username }});
+            //const {name, last_name, rolls, username, password} 
+            console.log(user)
+            if (data.name) {
+                user.name = data.name;
+            }
+            if (data.last_name) {
+                user.last_name = data.last_name;
+            }
+            if (data.rolls){
+                
+                try{
+
+                    const rollRepository = database.getRepository(Roll);
+
+                    const rolls = await Promise.all(data.rolls.map(async (r) => {
+                        const roll = await rollRepository.findOne({ where: { name: r} });
+                        if (roll) {
+                          return roll;
+                        }
+                    })).then((result) => result.filter((roll) => roll !== undefined));
+                    
+                      user.rolls = rolls;
+                      await this.userRepository.save(user);
+                      console.log(user)
+
+                    //await this.userRepository.update( , user);  
+
+                }catch(error){
+                    console.log(error)
+                }
+                // await Promise.all(rolls.map(async (r) => {
+                //     const rollRepository = database.getRepository(Roll);
+                //     const roll = rollRepository.update({name: r});
+                //     await rollRepository.save(roll);
+                // }));
+            }
+            if (data.password){
+                const salt = bcryptjs.genSaltSync();
+                const validPassword = bcryptjs.hashSync(data.password, salt);
+                credentials.password = validPassword
+                //const updatedCredentials = userCredentials ? userCredentials : (userCredentials.update(id, { password: validPassword, user}));
+            }
+            if (data.username){
+                credentials.username = data.username;
+                //const updatedCredentials = userCredentials ? userCredentials : (userCredentials.update(id, { username: data.username, user}));
+            }
+            await userCredentials.save(credentials);
+            await this.userRepository.save(user);
+            //const newUser = userCredentials.create();
+        }
+      }
 }
 
