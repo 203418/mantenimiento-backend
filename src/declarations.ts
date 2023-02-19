@@ -19,7 +19,7 @@ export interface userRepository<T> {
     countUsers(): Promise<Number>;
     getUsers(id: number): Promise<User[]>;
     deleteUser(id: number) : Promise<void>;
-    updateUser(id: number, data: userData) : Promise<void>;
+    updateUser(id: number, data: userData) : any;
 }
 
 export interface processRepository<T> {

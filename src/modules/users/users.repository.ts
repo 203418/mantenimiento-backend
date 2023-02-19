@@ -6,6 +6,7 @@ import Roll from "../roles/roles.model";
 import Credential from "./credentials.model";
 import User from "./users.model";
 import { Not, Repository } from "typeorm";
+import { response } from "express";
 
 export default class UserRepository implements userRepository<User>{
     private userRepository: Repository<User>;
@@ -66,6 +67,7 @@ export default class UserRepository implements userRepository<User>{
             }));
 
             user.credentials = credentials;
+            
             user.rolls = rolls;
             await this.userRepository.save(user);
             return user;
@@ -85,68 +87,72 @@ export default class UserRepository implements userRepository<User>{
             const userCredentials = database.getRepository(Credential);
             const credentials = await userCredentials.delete(id);
             const user = await this.userRepository.delete(id);
-            
         }catch(error){
             console.log(error)
         }   
     }
 
-    async updateUser(id: number, data: Partial<userData>): Promise<void> {
+    async updateUser(id: number, data: Partial<userData>) {
         const user = await this.userRepository.findOneBy({id : id});
-
-        if(user){
-            const userCredentials = database.getRepository(Credential);
-            const credentials = await userCredentials.findOne({ where: { username: data.username }});
-            //const {name, last_name, rolls, username, password} 
-            console.log(user)
-            if (data.name) {
-                user.name = data.name;
-            }
-            if (data.last_name) {
-                user.last_name = data.last_name;
-            }
-            if (data.rolls){
-                
-                try{
-
-                    const rollRepository = database.getRepository(Roll);
-
-                    const rolls = await Promise.all(data.rolls.map(async (r) => {
-                        const roll = await rollRepository.findOne({ where: { name: r} });
-                        if (roll) {
-                          return roll;
-                        }
-                    })).then((result) => result.filter((roll) => roll !== undefined));
-                    
-                      user.rolls = rolls;
-                      await this.userRepository.save(user);
-                      console.log(user)
-
-                    //await this.userRepository.update( , user);  
-
-                }catch(error){
-                    console.log(error)
-                }
-                // await Promise.all(rolls.map(async (r) => {
-                //     const rollRepository = database.getRepository(Roll);
-                //     const roll = rollRepository.update({name: r});
-                //     await rollRepository.save(roll);
-                // }));
-            }
-            if (data.password){
-                const salt = bcryptjs.genSaltSync();
-                const validPassword = bcryptjs.hashSync(data.password, salt);
-                credentials.password = validPassword
-                //const updatedCredentials = userCredentials ? userCredentials : (userCredentials.update(id, { password: validPassword, user}));
-            }
-            if (data.username){
-                credentials.username = data.username;
-                //const updatedCredentials = userCredentials ? userCredentials : (userCredentials.update(id, { username: data.username, user}));
-            }
-            await userCredentials.save(credentials);
-            await this.userRepository.save(user);
-            //const newUser = userCredentials.create();
+        const response = {
+            noUpdate: "Error al actualizar", 
+            noFound : "Usuario ya existente", 
+            success : "Usuario actualizado"      
         }
+
+        try{
+            if(user){
+                const userCredentials = database.getRepository(Credential);
+                const credentials = await userCredentials.findOne({ where: { id: id }});
+                //const {name, last_name, rolls, username, password} 
+                if (data.name) {
+                    user.name = data.name;
+                }
+                if (data.last_name) {
+                    user.last_name = data.last_name;
+                }
+                if (data.rolls){
+                    const rollRepository = database.getRepository(Roll);
+    
+                        const rolls = await Promise.all(data.rolls.map(async (r) => {
+                            const roll = await rollRepository.findOne({ where: { name: r} });
+                            if (roll) {
+                              return roll;
+                            }
+                        })).then((result) => result.filter((roll) => roll !== undefined));
+                        
+                          user.rolls = rolls;
+                }
+                if (data.password){
+                    const salt = bcryptjs.genSaltSync();
+                    const validPassword = bcryptjs.hashSync(data.password, salt);
+                    credentials.password = validPassword
+                    //const updatedCredentials = userCredentials ? userCredentials : (userCredentials.update(id, { password: validPassword, user}));
+                }
+                if (data.username){
+                    const newUSername = await userCredentials.findOne({ where: { username: data.username} });
+                    console.log(newUSername)
+                    if(!newUSername){
+                        credentials.username = data.username;
+                    }else{
+                        return response.noFound
+                    }
+                    //const updatedCredentials = userCredentials ? userCredentials : (userCredentials.update(id, { username: data.username, user}));
+                }
+                await userCredentials.save(credentials);
+                await this.userRepository.save(user);
+
+                return response.success
+                
+                //const newUser = userCredentials.create();
+            }else{
+                return response.noUpdate
+            }
+
+        }catch(error){
+            return response.noUpdate
+        }
+        
       }
 }
 

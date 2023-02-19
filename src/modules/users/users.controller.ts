@@ -45,25 +45,24 @@ export default class UserController {
 
     async deleteUserOfId(req: Request, res: Response){
         const id = req.body.id;
-        
         try{
             await this.repository.deleteUser(id);
 
             return res.status(200).json({message: "El usuario ha sido eliminado" })
         }catch(error){
-            return res.status(400).json({message: error})
+            return res.status(400).json({message: "No se elimino el usuario: ",error})
         }
         
     }
 
     async updateUserOfId(req: Request, res: Response){
-        const id = req.body.id;
-        const data = req.body
-        try{   
-            await this.repository.updateUser(id, data)
-            return res.status(200).json({message: "Usuario actualizado"})
+        try{
+            const id = req.body.id;
+            const data = req.body
+            const update = await this.repository.updateUser(id, data)
+            return res.status(200).json({message: update })
         }catch(error){
-            return res.status(200).json({message: "Error al actualizar"})
+            return res.status(400).json({message: "Error al actualizar"})
         }
     }
 }
