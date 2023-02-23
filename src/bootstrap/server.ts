@@ -9,6 +9,7 @@ import RollController from "../modules/roles/roles.controller";
 import rollRouter from "../modules/roles/roles.router";
 import userRouter from "../modules/users/user.router";
 import processRouter from "../modules/process/process.router";
+import phaseRouter from "../modules/phases/phases.router";
 
 export default class Server {
     private readonly app: Application;
@@ -22,6 +23,7 @@ export default class Server {
             rolls: '/rolls',
             users: '/users',
             process: '/process',
+            phases: '/phases'
         };
         this.dataBaseConnection();
         this.middlewares();
@@ -47,6 +49,7 @@ export default class Server {
         this.app.use(this.paths.rolls, rollRouter);
         this.app.use(this.paths.users, userRouter);
         this.app.use(this.paths.process, processRouter);
+        this.app.use(this.paths.phases, phaseRouter);
     }
     initialize() {
         return new Promise((resolve, reject) => {

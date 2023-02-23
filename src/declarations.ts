@@ -1,4 +1,5 @@
 import { Query } from "typeorm/driver/Query";
+import Phase from "./modules/phases/phases.model";
 import Process from "./modules/process/process.model";
 import Roll from "./modules/roles/roles.model";
 import User from "./modules/users/users.model";
@@ -7,6 +8,7 @@ export interface paths {
     rolls: string;
     users: string;
     process: string;
+    phases: string;
 }
 
 export type roll = "MANAGER" | "QUALITY MANAGER" | 
@@ -30,6 +32,21 @@ export interface rollRepository<T> {
     getRolls(): Promise<Roll[]>;
 }
 
+export interface phaseRepository<T> {
+    registerPhase(phaseData: PhaseData): Promise<Phase | Number>;
+    updatePhase(phaseData: PhaseData, id: number): Promise<Phase | Number>;
+    deletePhase(id: number): Promise<Number>;
+    readPhases(): Promise<Phase[] | Number>;
+    getById(id: number): Promise<Phase | Number>;
+}
+
+export interface PhaseData {
+    nombre: string;
+    numero_procesos?: number;
+    descripcion: string;
+    objetivo: string;
+}
+
 export interface processData {
     name: string;
     object: string;
@@ -40,7 +57,7 @@ export interface processData {
     evidencia_entrada: string;
     evidencia_salida: string;
     frecuencia: string;
-    fase: string;
+    fase: number;
     idR: number;
 }
 

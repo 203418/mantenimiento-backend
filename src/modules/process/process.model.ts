@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ManyToMany } from "typeorm/decorator/relations/ManyToMany";
 import { OneToMany } from "typeorm/decorator/relations/OneToMany";
+import Phase from "../phases/phases.model";
 import User from "../users/users.model";
 
 @Entity('process')
@@ -38,6 +39,7 @@ export default class Process {
     @Column('text')
     frecuencia: string;
 
-    @Column('text')
-    fase: string;
+    @ManyToOne(() => Phase, (phase: Phase) => phase.processes)
+    @JoinColumn()
+    fase: Phase;
 }
