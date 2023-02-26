@@ -1,5 +1,7 @@
+import { UploadedFile } from "express-fileupload";
 import { Query } from "typeorm/driver/Query";
 import Phase from "./modules/phases/phases.model";
+import Evidence from "./modules/process/evidencia.model";
 import Process from "./modules/process/process.model";
 import Roll from "./modules/roles/roles.model";
 import User from "./modules/users/users.model";
@@ -23,7 +25,12 @@ export interface userRepository<T> {
 }
 
 export interface processRepository<T> {
-    registerProcess(data: processData): Promise<Process | Number>;
+    registerProcess(data: processCreate): Promise<Process | Number>;
+    updateProcess(data: Partial<processData>, id: number, user: User): Promise<Process | Number>;
+    deleteProcess(id: number): Promise<Number>;
+    showProcesses(): Promise<Process[] | Number>;
+    showByPhase(fase_id: number): Promise<Process[] | Number>;
+    showById(id: number): Promise<Process | Number>;
 }
 
 export interface rollRepository<T> {
@@ -40,11 +47,28 @@ export interface phaseRepository<T> {
     getById(id: number): Promise<Phase | Number>;
 }
 
+export interface evidenceRepository<T> {
+    createEvidence(files: UploadedFile[], folder: string): Promise<Evidence[]>;
+}
+
+export default interface evidencedata {
+    nombre: string;
+    nombreOriginal: string;
+    url: string;
+    ruta: string;
+}
+
 export interface PhaseData {
     nombre: string;
     numero_procesos?: number;
     descripcion: string;
     objetivo: string;
+}
+
+export interface processCreate {
+    name: string;
+    responsable_id: number;
+    phase_id: number;
 }
 
 export interface processData {
@@ -54,11 +78,10 @@ export interface processData {
     indicators: string;
     flujo_digram: string;
     participantes: string;
-    evidencia_entrada: string;
-    evidencia_salida: string;
     frecuencia: string;
-    fase: number;
-    idR: number;
+    participantList: number[];
+    evidenceEntries: Evidence[];
+    evidenceOutputs: Evidence[];
 }
 
 export interface rollData {

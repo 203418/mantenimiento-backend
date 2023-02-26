@@ -19,6 +19,6 @@ export default class Phase {
     @Column("text")
     objetivo: string;
 
-    @OneToMany(() => Process, (process: Process) => process.fase, {cascade: true, eager:true})
+    @OneToMany(() => Process, (process: Process) => process.fase)
     processes: Process[];
 }
