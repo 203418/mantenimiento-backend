@@ -16,7 +16,7 @@ export const validateQualityManager = (req: Request, res: Response, next: NextFu
 
 export const validatePhaseName = async (req: Request, res: Response, next: NextFunction) => {
     const phaseR = new PhaseRepository();
-    const phase = phaseR.getPhaseName(req.body.nombre);
+    const phase = await phaseR.getPhaseName(req.body.nombre);
     if(phase)
         return res.status(401).json({
             message:"Este nombre de fase ya existe"
