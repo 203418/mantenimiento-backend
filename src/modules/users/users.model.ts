@@ -18,8 +18,8 @@ export default class User {
     @OneToOne(() => Credential, (credential: Credential) => credential.user, {cascade: true})
     credentials: Credential
 
-    @OneToMany(() => Process, (process: Process) => process.responsable, {cascade: true, eager: true})
-    processes: Process[];
+    @OneToMany(() => Process, (process: Process) => process.last_editor, {cascade: true, eager: true})
+    processes_edited: Process[];
 
     @ManyToMany(() => Roll, (roll: Roll) => roll.users, {cascade: true, eager: true})
     @JoinTable({
@@ -28,6 +28,10 @@ export default class User {
         inverseJoinColumn: {name: 'roll_id'}
     })
     rolls: Roll[]
+
+    @ManyToMany(() => Process, (process: Process) => process.participants, {cascade: true, eager: true})
+    processes_involucrated: Process[];
+
 
     @CreateDateColumn()
     createAt: Date;

@@ -18,6 +18,7 @@
     "@types/express-fileupload": "^1.4.1",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/multer": "^1.4.7",
+    "@types/uuid": "^9.0.1",
     "gulp": "^4.0.2",
     "gulp-uglify-es": "^3.0.0",
     "nodemon": "^2.0.20",
@@ -31,10 +32,12 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
+    "express-validator": "^6.15.0",
     "jsonwebtoken": "^9.0.0",
     "multer": "^1.4.5-lts.1",
     "pg": "^8.8.0",
     "typeorm": "^0.3.11",
-    "typeorm-seeding": "^1.6.1"
+    "typeorm-seeding": "^1.6.1",
+    "uuid": "^9.0.0"
   }
 }
