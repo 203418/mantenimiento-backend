@@ -5,6 +5,7 @@ import Phase from "../phases/phases.model";
 import Roll from "../roles/roles.model";
 import User from "../users/users.model";
 import Evidence from "./evidencia.model";
+import PDF from "./pdf.model";
 
 @Entity('process')
 export default class Process {
@@ -67,4 +68,7 @@ export default class Process {
     @ManyToOne(() => Phase, (phase: Phase) => phase.processes, {cascade: true, eager:true})
     @JoinColumn()
     fase: Phase;
+
+    @OneToOne(() => PDF, (pdf: PDF) => pdf.process, {cascade: true, eager: true})
+    pdf: PDF;
 }

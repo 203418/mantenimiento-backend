@@ -1,9 +1,10 @@
 import { Request, Response, Express } from "express";
-import { processData } from "../../declarations";
+import { evidenceUrl, processData } from "../../declarations";
 import Evidence from "./evidencia.model";
 import EvidencyRepository from "./evidencia.repository";
 import ProcessRepository from "./process.repository";
-
+import { uploadArchive } from "../../helpers/validateExtension";
+import { UploadedFile } from "express-fileupload";
 
 export default class ProcessController {
 
@@ -52,20 +53,43 @@ export default class ProcessController {
     }
 
     async update(req:Request, res: Response) {
-        const {user, ...data} = req.body;
-        console.log(1);
+        const {user, output, entry, ...data} = req.body;
         const id = req.params.id;
         if (!data) return res.status(200).json({msg: "No hay nada para actualizar"});
         let evidenceEntries: Evidence[] = [];
         let evidenceOutputs: Evidence[] = [];
+        let flow_chart: Evidence[]  | Evidence = [];
         const evidenciaRepo = new EvidencyRepository();
+        if (req.files && Object.keys(req.files).length > 0 && req.files.flow_chart){
+            const file = req.files.flow_chart as UploadedFile;
+            flow_chart = await evidenciaRepo.createEvidence(file, 'flow_chart/');
+            data.flujo_digram = flow_chart.url;
+        }
         if (req.files && Object.keys(req.files).length > 0 && req.files.entries) {
             const filesArray = Object.values(req.files.entries);
-            evidenceEntries = await evidenciaRepo.createEvidence(filesArray, 'entries/');  
+            if (typeof filesArray[0] !== "string")
+                evidenceEntries = await evidenciaRepo.createEvidences(filesArray, 'entries/');
+            else{
+                const file = req.files.entries as UploadedFile;
+                const entryN = await evidenciaRepo.createEvidence(file, 'entries/');
+                evidenceEntries.push(entryN);
+            }
+        }else if(entry){
+            const evidenceC = await EvidencyRepository.createUrlE(entry);
+            evidenceEntries.push(evidenceC);
         }
         if (req.files && Object.keys(req.files).length > 0 && req.files.outputs){
             const filesArray2 = Object.values(req.files.outputs);
-            evidenceOutputs = await evidenciaRepo.createEvidence(filesArray2, 'outputs/');
+            if (typeof filesArray2[0] !== "string")
+                evidenceOutputs = await evidenciaRepo.createEvidences(filesArray2, 'outputs/');
+            else {
+                const file = req.files.outputs as UploadedFile;
+                const outputN = await evidenciaRepo.createEvidence(file, 'outputs/');
+                evidenceOutputs.push(outputN);
+            }                
+        }else if (output){
+            const evidenceC = await EvidencyRepository.createUrlE(output);
+            evidenceOutputs.push(evidenceC);
         }
         const process: any = await this.repository.updateProcess({...data, evidenceEntries, evidenceOutputs}, +id, user);
         if (typeof process === 'number'){

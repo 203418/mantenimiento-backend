@@ -1,4 +1,5 @@
 import { Application } from "express";
+import path from "path";
 import { paths } from "../declarations";
 import database from "./database";
 import cors from 'cors';
@@ -36,9 +37,11 @@ export default class Server {
             .catch(console.error);
     }
     middlewares(){
+        const publicPath = path.resolve(__dirname, '../../uploads');
         this.app.use(cors());
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
+        this.app.use('/files', express.static(publicPath));        
         this.app.use(fileUpload({
             useTempFiles: true,
             tempFileDir: '/tmp/',

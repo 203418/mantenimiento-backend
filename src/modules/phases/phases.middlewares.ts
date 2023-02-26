@@ -9,7 +9,7 @@ export const validateQualityManager = (req: Request, res: Response, next: NextFu
     const rolls: roll[] = user.rolls.map(r => r.name);
     if (!rolls.includes("QUALITY MANAGER"))
         return res.status(401).json({
-            message: "Este rol no tiene permiso para agregar Fases"
+            message: "Este rol no tiene permiso para gestionar Fases"
         });
     next();
 }

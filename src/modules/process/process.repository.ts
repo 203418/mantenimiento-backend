@@ -1,9 +1,11 @@
 import database from "../../bootstrap/database";
 import { processCreate, processData, processRepository } from "../../declarations";
+import { create } from "../../helpers/pdf_generation/pdf";
 import Phase from "../phases/phases.model";
 import Roll from "../roles/roles.model";
 import User from "../users/users.model";
 import Evidence from "./evidencia.model";
+import PDF from "./pdf.model";
 import Process from "./process.model";
 
 export default class ProcessRepository implements processRepository<Process> {
@@ -34,6 +36,7 @@ export default class ProcessRepository implements processRepository<Process> {
         try {
             const {participantList, evidenceEntries, evidenceOutputs} = data;
             const userRepo = database.getRepository(User);
+            const pdfRepo = database.getRepository(PDF);
             let users: User[] = [];
             const processRepo = database.getRepository(Process);
             const process = await processRepo.findOne({where: {id}});
@@ -55,6 +58,18 @@ export default class ProcessRepository implements processRepository<Process> {
             delete data.evidenceOutputs;
             await processRepo.update({id}, {...data, last_editor: user});
             const process2 = await processRepo.findOne({where: {id}, relations:{last_editor: true}});
+            const url = create(process2);
+            let pdf = await pdfRepo.findOne({where: {nombre: process2.name.replace(' ','')}});
+            if (!pdf){
+                pdf = pdfRepo.create({
+                    nombre: process2.name.replace(' ',''),
+                    path: ""+url,
+                    url: "http://localhost:8000/files/"+url
+                });
+                pdfRepo.save(pdf);
+                process2.pdf = pdf;
+                processRepo.save(process2);
+            }
             return process2;
         } catch (error) {
             console.log(error);

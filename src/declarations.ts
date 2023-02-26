@@ -48,10 +48,15 @@ export interface phaseRepository<T> {
 }
 
 export interface evidenceRepository<T> {
-    createEvidence(files: UploadedFile[], folder: string): Promise<Evidence[]>;
+    createEvidences(files: UploadedFile[], folder: string): Promise<Evidence[]>;
 }
 
-export default interface evidencedata {
+export interface evidenceUrl {
+    nombre: string;
+    url: string;
+}
+
+export interface evidencedata {
     nombre: string;
     nombreOriginal: string;
     url: string;
@@ -77,7 +82,6 @@ export interface processData {
     identifier: string
     indicators: string;
     flujo_digram: string;
-    participantes: string;
     frecuencia: string;
     participantList: number[];
     evidenceEntries: Evidence[];
