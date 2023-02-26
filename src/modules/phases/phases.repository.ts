@@ -74,4 +74,8 @@ export default class PhaseRepository implements phaseRepository<Phase> {
         }
     }
     
+    async getPhaseName(nombre: string): Promise<Phase>{
+        return await this.phaseRepo.findOneBy({ nombre });        
+    }
+    
 }
