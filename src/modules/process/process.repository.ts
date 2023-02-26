@@ -86,6 +86,12 @@ export default class ProcessRepository implements processRepository<Process> {
         return processes;
     }
 
+    async showByRoll(rol_id: number): Promise<Process[]>{
+        const rolRepo = database.getRepository(Roll);
+        const roll = await rolRepo.findOne({where: {id: rol_id}, relations: {processes: true}});
+        return roll.processes;
+    }
+
     async showById(id: number): Promise<Number | Process> {
         const processRepo = database.getRepository(Process);
         const process = await processRepo.findOneBy({id});

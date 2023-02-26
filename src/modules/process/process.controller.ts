@@ -25,6 +25,12 @@ export default class ProcessController {
         return res.json(process);
     }
 
+    async showByRoll(req: Request, res: Response){
+        const rol_id = req.params.id;
+        const processes = await this.repository.showByRoll(+rol_id);
+        return res.json(processes);
+    }
+
     async register(req: Request, res: Response) {
         const {name, responsable_id, phase_id} = req.body;
         const user = req.body;

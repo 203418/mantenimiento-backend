@@ -26,4 +26,6 @@ processRouter.get('/:id', updateChecks, processController.showById.bind(processC
 
 processRouter.get('/fase/:id', updateChecks, processController.showByPhase.bind(processController));
 
+processRouter.get('/roll/:id', updateChecks, processController.showByRoll.bind(processController));
+
 export default processRouter;
