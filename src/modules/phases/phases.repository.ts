@@ -25,12 +25,12 @@ export default class PhaseRepository implements phaseRepository<Phase> {
             return 1;
         }
     }
-    async deletePhase(id: number): Promise<Number> {
+    async deletePhase(id: number): Promise<Number | Phase> {
         try {
             const phase = await this.phaseRepo.findOneBy({id});
             if (phase){
                 await this.phaseRepo.delete(phase.id);
-                return 1;
+                return phase
             }else {
                 return 2;
             }

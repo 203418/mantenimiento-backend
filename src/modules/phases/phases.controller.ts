@@ -29,7 +29,8 @@ export default class PhaseController {
             return res.status(400).json({msg: 'Error al crear la fase'});
         else if (resp==2)
             return res.status(400).json({msg: 'No existe la fase a eliminar'});
-        return res.status(200).json({msg: 'Fase eliminada exitosamente'});
+        if (typeof resp != "number")
+            return res.status(200).json({msg: 'Fase eliminada exitosamente', id: resp});
     }
     async registerPhase(req: Request, res: Response){
         const data: PhaseData = req.body;

@@ -77,11 +77,12 @@ export default class ProcessRepository implements processRepository<Process> {
         }
     }
 
-    async deleteProcess(id: number): Promise<Number> {
+    async deleteProcess(id: number): Promise<Number | Process> {
         try {
             const processRepo = database.getRepository(Process);
+            const process = await processRepo.findOneBy({id});
             await processRepo.delete({id});
-            return 0;
+            return process;
         } catch (error) {
             return 1;
         }

@@ -45,11 +45,9 @@ export default class ProcessController {
             }
             return res.status(200).json({msg: response})
         }
-        const nameR = process.responsable.name;
-        delete process.responsable;
         delete process.participants;
         delete process.fase;
-        return res.status(200).json({...process, responbale: nameR});
+        return res.status(200).json(process);
     }
 
     async update(req:Request, res: Response) {
@@ -103,6 +101,6 @@ export default class ProcessController {
         const process = await this.repository.deleteProcess(+id);
         if (process === 1)
             return res.status(500).json({msg: "Error al eliminar el proceso"})
-        return res.status(200).json({msg: "Eliminado con éxito"})
+        return res.status(200).json(process);
     }
 }

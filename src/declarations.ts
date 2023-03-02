@@ -27,7 +27,7 @@ export interface userRepository<T> {
 export interface processRepository<T> {
     registerProcess(data: processCreate): Promise<Process | Number>;
     updateProcess(data: Partial<processData>, id: number, user: User): Promise<Process | Number>;
-    deleteProcess(id: number): Promise<Number>;
+    deleteProcess(id: number): Promise<Number | Process>;
     showProcesses(): Promise<Process[] | Number>;
     showByPhase(fase_id: number): Promise<Process[] | Number>;
     showById(id: number): Promise<Process | Number>;
@@ -42,7 +42,7 @@ export interface rollRepository<T> {
 export interface phaseRepository<T> {
     registerPhase(phaseData: PhaseData): Promise<Phase | Number>;
     updatePhase(phaseData: PhaseData, id: number): Promise<Phase | Number>;
-    deletePhase(id: number): Promise<Number>;
+    deletePhase(id: number): Promise<Number | Phase>;
     readPhases(): Promise<Phase[] | Number>;
     getById(id: number): Promise<Phase | Number>;
 }
